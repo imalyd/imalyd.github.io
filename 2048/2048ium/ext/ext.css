@@ -1,0 +1,6 @@
+/*
+	Extension CSS for 2048ium.
+*/
+.scores-container, .restart-button{
+	display: none;
+}

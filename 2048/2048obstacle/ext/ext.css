@@ -1,0 +1,6 @@
+/*
+	Extension CSS for 2048ium.
+*/
+.tile.tile-0 .tile-inner {
+    color: #ffffff;
+    background: #008a00; }
