@@ -8,7 +8,8 @@
 </head>
 
 <body>
-
+	<h1>Here are some Math Characters in Unicode.</h1>
+	<h2>You can use them anywhere without plugins like KaTeX.</h2>
 </body>
 
 </html>
@@ -67,6 +68,9 @@
 		{ start: 120172, cnt: 52 },//fraktur characters bold
 		{ start: 120432, cnt: 52 },//typewriter characters
 		{ start: 120484, cnt: 4 },//i & j
+		{ start: 120488, cnt: 58 },//bold greek characters
+		{ start: 120546, cnt: 58 },//italic greek characters
+		{ start: 120604, cnt: 58 },//bold italic greek characters
 		{ start: 120782, cnt: 10 },//math numbers bold
 		{ start: 120792, cnt: 10 },//math numbers double
 		{ start: 120822, cnt: 10 },//math numbers typewriter
@@ -81,7 +85,7 @@
 			str += "&#" + (start + i) + ";&nbsp;";
 		str += "<br>";
 	});
-	body.innerHTML = str;
+	body.innerHTML += str;
 	function changeFont(str) {
 		body.setAttribute('style', 'font-family:' + str);
 	}
