@@ -18,7 +18,7 @@
 		{ start: 188, cnt: 3 },//1/4
 		{ start: 215, cnt: 1 },//Multiply
 		{ start: 247, cnt: 1 },//Divide
-		{ start: 913, cnt: 26 },//Alpha
+		{ start: 913, cnt: 25 },//Alpha
 		{ start: 945, cnt: 25 },//alpha
 		{ start: 7839, cnt: 1 },//delta
 		{ start: 8304, cnt: 1 },//^0
@@ -27,6 +27,7 @@
 		{ start: 8308, cnt: 12 },//^4 ~ ^9
 		{ start: 8320, cnt: 21 },//_0 ~ _9
 		{ start: 9192, cnt: 1 },//_{10}
+		{ start: 8448, cnt: 53 },//...
 		{ start: 8501, cnt: 4 },//aleph
 		{ start: 8508, cnt: 14 },//double_pi
 		{ start: 8528, cnt: 16 },//1/7
@@ -75,7 +76,9 @@
 	charlist.forEach(function (interval) {
 		var start = interval.start;
 		var cnt = interval.cnt;
-		for (i = 0; i != cnt; ++i)str += "&#" + (start + i) + ";&nbsp;";
+		str += "<!-- " + start + ", " + cnt + " -->";
+		for (i = 0; i != cnt; ++i)
+			str += "&#" + (start + i) + ";&nbsp;";
 		str += "<br>";
 	});
 	body.innerHTML = str;
