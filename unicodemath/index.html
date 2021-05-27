@@ -3,6 +3,8 @@
 
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<link rel="icon" href="unicode.ico" sizes="128x128" />
+	<title>Math Characters in Unicode</title>
 </head>
 
 <body>
@@ -11,7 +13,7 @@
 
 </html>
 <script>
-	charlist = [
+	var charlist = [
 		{ start: 167, cnt: 1 },//segment
 		{ start: 188, cnt: 3 },//1/4
 		{ start: 215, cnt: 1 },//Multiply
@@ -31,9 +33,9 @@
 		{ start: 8585, cnt: 7 },//0/3
 		{ start: 8592, cnt: 112 },//<->
 		{ start: 8704, cnt: 64 },//<->
-		{ start: 8704+64 , cnt: 64 },//<->
-		{ start: 8704+128, cnt: 64 },//<->
-		{ start: 8704+192, cnt: 64 },//<->
+		{ start: 8704 + 64, cnt: 64 },//<->
+		{ start: 8704 + 128, cnt: 64 },//<->
+		{ start: 8704 + 192, cnt: 64 },//<->
 		{ start: 8968, cnt: 4 },//left ceiling
 		{ start: 0, cnt: 0 },//emptyline
 		{ start: 8992, cnt: 2 },//integral
@@ -44,17 +46,17 @@
 		{ start: 10176, cnt: 48 },//...
 		{ start: 10224, cnt: 16 },//arrows
 		{ start: 10496, cnt: 64 },//arrows
-		{ start: 10496+64, cnt: 64 },//arrows
+		{ start: 10496 + 64, cnt: 64 },//arrows
 		{ start: 10624, cnt: 64 },//math
-		{ start: 10624+64, cnt: 64 },//math
+		{ start: 10624 + 64, cnt: 64 },//math
 		{ start: 10752, cnt: 64 },//math
-		{ start: 10752+64 , cnt: 64 },//math
-		{ start: 10752+128, cnt: 64 },//math
-		{ start: 10752+192, cnt: 64 },//math
+		{ start: 10752 + 64, cnt: 64 },//math
+		{ start: 10752 + 128, cnt: 64 },//math
+		{ start: 10752 + 192, cnt: 64 },//math
 		{ start: 11008, cnt: 64 },//others
-		{ start: 11008+64 , cnt: 64 },//others
-		{ start: 11008+128, cnt: 64 },//others
-		{ start: 11008+192, cnt: 19 },//others
+		{ start: 11008 + 64, cnt: 64 },//others
+		{ start: 11008 + 128, cnt: 64 },//others
+		{ start: 11008 + 192, cnt: 19 },//others
 		{ start: 119860, cnt: 52 },//math characters
 		{ start: 119912, cnt: 52 },//math characters bold
 		{ start: 119964, cnt: 52 },//math script characters
@@ -68,12 +70,16 @@
 		{ start: 120792, cnt: 10 },//math numbers double
 		{ start: 120822, cnt: 10 },//math numbers typewriter
 	];
+	var body = document.getElementsByTagName('body')[0];
+	var str = "";
 	charlist.forEach(function (interval) {
 		var start = interval.start;
 		var cnt = interval.cnt;
-		var str = "";
 		for (i = 0; i != cnt; ++i)str += "&#" + (start + i) + ";&nbsp;";
-		console.log(str);
-		document.getElementsByTagName('body')[0].innerHTML += str + "<br>";
+		str += "<br>";
 	});
+	body.innerHTML = str;
+	function changeFont(str) {
+		body.setAttribute('style', 'font-family:' + str);
+	}
 </script>
