@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+	</head>
+	<body>
+		<p>Current: <span id="current">#</span></p>
+		<br>
+		<p>Highest: <span id="highest">#</span></p>
+	</body>
+	<script>
+		function RanInt(l,r){
+			return l+Math.floor(Math.random()*(r-l));
+		}
+		var Current=0;
+		var Highest=0;
+		function Run(){
+			Current=RanInt(0,Current*2+2);
+			Highest=Math.max(Current,Highest);
+			document.getElementById("current").innerHTML=Current.toString();
+			document.getElementById("highest").innerHTML=Highest.toString();
+			setTimeout(Run,1000);
+		}
+		Run();
+	</script>
+</html>
