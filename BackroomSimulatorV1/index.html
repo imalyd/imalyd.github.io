@@ -51,7 +51,25 @@
 				new BABYLON.Vector3(0, -1, 0),
 				scene
 			);
-			var level0FloorMaterial = createMaterial("level0/floor.jpg", scene);
+			/*
+			var level0FloorMaterial = createMaterial(
+				"levels/level0/floor.jpg",
+				scene
+			);
+			var level0WallMaterial = createMaterial("levels/level0/wall.jpg", scene);
+			var level0LightMaterial = createEmissiveMaterial(
+				"levels/level0/light.jpg",
+				scene
+			);*/
+			var level0FloorMaterial = createMaterialFromColor(0.5, 0.5, 0.2, scene);
+			var level0WallMaterial = createMaterialFromColor(0.8, 0.8, 0.5, scene);
+			var level0LightMaterial = createEmissiveMaterialFromColor(1, 1, 1, scene);
+			var level0BadLightMaterial = createMaterialFromColor(
+				0.1,
+				0.1,
+				0.1,
+				scene
+			);
 
 			scene.gravity = new BABYLON.Vector3(0, -1, 0);
 			camera.applyGravity = true;
@@ -64,15 +82,10 @@
 				return "o" + ++objectCount;
 			};
 			const unitWidth = 10;
-			const unitCount=1;
-			const blockWidth=unitWidth*unitCount;
+			const unitCount = 1;
+			const blockWidth = unitWidth * unitCount;
 			const probabilityOfWallGeneration = 0.4;
 
-			var level0WallMaterial = createMaterial("level0/wall.png", scene);
-			var level0LightMaterial = createEmissiveMaterial(
-				"level0/light.png",
-				scene
-			);
 			var loadBlock = function (xp, yp) {
 				var x = xp * blockWidth;
 				var y = yp * blockWidth;
@@ -85,7 +98,11 @@
 					{ height: 2, width: blockWidth, depth: blockWidth },
 					scene
 				);
-				ground.position = new BABYLON.Vector3(x + blockWidth*0.5, 0, y +  blockWidth*0.5);
+				ground.position = new BABYLON.Vector3(
+					x + blockWidth * 0.5,
+					0,
+					y + blockWidth * 0.5
+				);
 				ground.checkCollisions = true;
 				ground.material = level0FloorMaterial;
 				objects.push(ground);
@@ -95,7 +112,11 @@
 					{ height: 2, width: blockWidth, depth: blockWidth },
 					scene
 				);
-				ceiling.position = new BABYLON.Vector3(x + blockWidth*0.5, 10, y +  blockWidth*0.5);
+				ceiling.position = new BABYLON.Vector3(
+					x + blockWidth * 0.5,
+					10,
+					y + blockWidth * 0.5
+				);
 				ceiling.checkCollisions = true;
 				ceiling.material = level0FloorMaterial;
 				objects.push(ceiling);
@@ -113,7 +134,8 @@
 							y + unitWidth * (j + 0.5)
 						);
 						light.checkCollisions = true;
-						light.material = level0LightMaterial;
+						if (Math.random() < 0.9) light.material = level0LightMaterial;
+						else light.material = level0BadLightMaterial;
 						objects.push(light);
 
 						var lightsource = new BABYLON.PointLight(
@@ -179,14 +201,17 @@
 				block.objects.forEach(function (object) {
 					object.dispose();
 				});
-				block.objects=[];
+				block.objects = [];
 			};
 			var blocks = [];
-			var isNear = function (xp1, yp1, xp2, yp2) {
-				return Math.abs(xp1 - xp2) < 4 && Math.abs(yp1 - yp2) < 4;
-			};
 			const blockLimit = 1000000;
 			const reloadInterval = 100;
+			const blockRange = 5;
+			var isNear = function (xp1, yp1, xp2, yp2) {
+				return (
+					Math.abs(xp1 - xp2) <= blockRange && Math.abs(yp1 - yp2) <= blockRange
+				);
+			};
 			var manageBlock = function (x, y) {
 				var xp = Math.floor(x / blockWidth);
 				var yp = Math.floor(y / blockWidth);
@@ -195,9 +220,9 @@
 					if (!near) delBlock(block);
 					return near;
 				});
-				for (var i = xp - 3; i <= xp + 3; ++i)
+				for (var i = xp - blockRange; i <= xp + blockRange; ++i)
 					if (Math.abs(i) < blockLimit)
-						for (var j = yp - 3; j <= yp + 3; ++j)
+						for (var j = yp - blockRange; j <= yp + blockRange; ++j)
 							if (Math.abs(j) < blockLimit) {
 								var noBlock = true;
 								blocks.forEach(function (block) {
@@ -208,17 +233,17 @@
 			};
 			//var block1 = loadBlock(0, 0);
 			//var block2 = loadBlock(0, 1);
-				manageBlock(camera._position._x,camera._position._z);
+			manageBlock(camera._position._x, camera._position._z);
 			engine.runRenderLoop(function () {
 				//manageBlock2(camera._position._x,camera._position._z);
 				scene.render();
 			});
-			function manage(){
-				manageBlock(camera._position._x,camera._position._z);
-				setTimeout(manage,reloadInterval);
-			};
+			function manage() {
+				manageBlock(camera._position._x, camera._position._z);
+				setTimeout(manage, reloadInterval);
+			}
 			manage();
-			
+
 			window.addEventListener("resize", function () {
 				engine.resize();
 			});
