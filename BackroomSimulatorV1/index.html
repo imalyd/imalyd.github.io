@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html" charset="utf-8" />
+		<title>Backrooms Level 0</title>
+		<style>
+			html,
+			body {
+				overflow: hidden;
+				width: 100%;
+				height: 100%;
+				margin: 0;
+				padding: 0;
+			}
+
+			#renderCanvas {
+				width: 100%;
+				height: 100%;
+				touch-action: none;
+			}
+		</style>
+	</head>
+	<body>
+		<canvas id="renderCanvas"></canvas>
+	</body>
+	<script src="babylon.js"></script>
+	<script src="material.js"></script>
+	<script>
+		window.addEventListener("DOMContentLoaded", function () {
+			var canvas = document.getElementById("renderCanvas");
+			var engine = new BABYLON.Engine(canvas, true);
+			var scene = new BABYLON.Scene(engine);
+			var camera = new BABYLON.FreeCamera(
+				"camera",
+				//new BABYLON.Vector3(45, 5, 45),
+				new BABYLON.Vector3(45, 5, 45),
+				scene
+			);
+			camera.setTarget(BABYLON.Vector3.Zero());
+			camera.attachControl(canvas, false);
+
+			console.log(camera);
+
+			var light = new BABYLON.HemisphericLight(
+				"light1",
+				new BABYLON.Vector3(0, 1, 0),
+				scene
+			);
+			var light2 = new BABYLON.HemisphericLight(
+				"light2",
+				new BABYLON.Vector3(0, -1, 0),
+				scene
+			);
+			var level0FloorMaterial = createMaterial("level0/floor.jpg", scene);
+
+			scene.gravity = new BABYLON.Vector3(0, -1, 0);
+			camera.applyGravity = true;
+			camera.ellipsoid = new BABYLON.Vector3(0.8, 1, 0.8);
+			scene.collisionsEnabled = true;
+			camera.checkCollisions = true;
+
+			var objectCount = 0;
+			var getObjectName = function () {
+				return "o" + ++objectCount;
+			};
+			const unitWidth = 10;
+			const unitCount=1;
+			const blockWidth=unitWidth*unitCount;
+			const probabilityOfWallGeneration = 0.4;
+
+			var level0WallMaterial = createMaterial("level0/wall.png", scene);
+			var level0LightMaterial = createEmissiveMaterial(
+				"level0/light.png",
+				scene
+			);
+			var loadBlock = function (xp, yp) {
+				var x = xp * blockWidth;
+				var y = yp * blockWidth;
+				var objects = [];
+
+				//Ground
+				var ground = BABYLON.MeshBuilder.CreateBox(
+					getObjectName(),
+
+					{ height: 2, width: blockWidth, depth: blockWidth },
+					scene
+				);
+				ground.position = new BABYLON.Vector3(x + blockWidth*0.5, 0, y +  blockWidth*0.5);
+				ground.checkCollisions = true;
+				ground.material = level0FloorMaterial;
+				objects.push(ground);
+				//Ceiling
+				var ceiling = BABYLON.MeshBuilder.CreateBox(
+					getObjectName(),
+					{ height: 2, width: blockWidth, depth: blockWidth },
+					scene
+				);
+				ceiling.position = new BABYLON.Vector3(x + blockWidth*0.5, 10, y +  blockWidth*0.5);
+				ceiling.checkCollisions = true;
+				ceiling.material = level0FloorMaterial;
+				objects.push(ceiling);
+				//Lights
+				for (var i = 0; i != unitCount; ++i) {
+					for (var j = 0; j != unitCount; ++j) {
+						var light = BABYLON.MeshBuilder.CreateBox(
+							getObjectName(),
+							{ height: 3, width: 5, depth: 5 },
+							scene
+						);
+						light.position = new BABYLON.Vector3(
+							x + unitWidth * (i + 0.5),
+							10,
+							y + unitWidth * (j + 0.5)
+						);
+						light.checkCollisions = true;
+						light.material = level0LightMaterial;
+						objects.push(light);
+
+						var lightsource = new BABYLON.PointLight(
+							getObjectName(),
+							new BABYLON.Vector3(0, -1, 0),
+							scene
+						);
+						lightsource.position = new BABYLON.Vector3(
+							x + unitWidth * (i + 0.5),
+							10,
+							y + unitWidth * (j + 0.5)
+						);
+						objects.push(lightsource);
+					}
+				}
+				//Horizontal walls
+				for (var i = 0; i != unitCount; ++i) {
+					for (var j = 0; j != unitCount; ++j) {
+						if (Math.random() < probabilityOfWallGeneration) {
+							var wall = BABYLON.MeshBuilder.CreateBox(
+								getObjectName(),
+								{ height: 10, width: unitWidth + 1, depth: 1 },
+								scene
+							);
+							wall.position = new BABYLON.Vector3(
+								x + unitWidth * (i + 0.5),
+								5,
+								y + unitWidth * j
+							);
+							wall.checkCollisions = true;
+							wall.material = level0WallMaterial;
+							objects.push(wall);
+						}
+					}
+				}
+				//Vertical walls
+				for (var i = 0; i != unitCount; ++i) {
+					for (var j = 0; j != unitCount; ++j) {
+						if (Math.random() < probabilityOfWallGeneration) {
+							var wall = BABYLON.MeshBuilder.CreateBox(
+								getObjectName(),
+								{ height: 10, width: 1, depth: unitWidth + 1 },
+								scene
+							);
+							wall.position = new BABYLON.Vector3(
+								x + unitWidth * i,
+								5,
+								y + unitWidth * (j + 0.5)
+							);
+							wall.checkCollisions = true;
+							wall.material = level0WallMaterial;
+							objects.push(wall);
+						}
+					}
+				}
+				return {
+					xp: xp,
+					yp: yp,
+					objects: objects,
+				};
+			};
+			var delBlock = function (block) {
+				block.objects.forEach(function (object) {
+					object.dispose();
+				});
+				block.objects=[];
+			};
+			var blocks = [];
+			var isNear = function (xp1, yp1, xp2, yp2) {
+				return Math.abs(xp1 - xp2) < 4 && Math.abs(yp1 - yp2) < 4;
+			};
+			const blockLimit = 1000000;
+			const reloadInterval = 100;
+			var manageBlock = function (x, y) {
+				var xp = Math.floor(x / blockWidth);
+				var yp = Math.floor(y / blockWidth);
+				blocks = blocks.filter(function (block) {
+					var near = isNear(block.xp, block.yp, xp, yp);
+					if (!near) delBlock(block);
+					return near;
+				});
+				for (var i = xp - 3; i <= xp + 3; ++i)
+					if (Math.abs(i) < blockLimit)
+						for (var j = yp - 3; j <= yp + 3; ++j)
+							if (Math.abs(j) < blockLimit) {
+								var noBlock = true;
+								blocks.forEach(function (block) {
+									if (block.xp == i && block.yp == j) noBlock = false;
+								});
+								if (noBlock) blocks.push(loadBlock(i, j));
+							}
+			};
+			//var block1 = loadBlock(0, 0);
+			//var block2 = loadBlock(0, 1);
+				manageBlock(camera._position._x,camera._position._z);
+			engine.runRenderLoop(function () {
+				//manageBlock2(camera._position._x,camera._position._z);
+				scene.render();
+			});
+			function manage(){
+				manageBlock(camera._position._x,camera._position._z);
+				setTimeout(manage,reloadInterval);
+			};
+			manage();
+			
+			window.addEventListener("resize", function () {
+				engine.resize();
+			});
+		});
+	</script>
+</html>
