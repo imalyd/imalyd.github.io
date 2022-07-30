@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title>DiceGame</title>
+	<style>
+		th,td{border: 1px solid black;}
+	</style>
+</head>
+
+<body>
+	<table>
+		<thead>
+			<th>#</th>
+			<th>Player1 score</th>
+			<th>Player2 score</th>
+		</thead>
+		<tbody id="tableBody">
+		</tbody>
+	</table>
+	<p id="msg">...</p>
+	<br>
+	<button id="roll" style="width: 50px;height:30px;display: inline-block;">Roll</button>
+	<button id="reset" style="width: 50px;height:30px;display: inline-block;">Reset</button>
+	<br>
+	<div style="width: 100px;height: 100px;border: 5px solid red;display: inline-block;">
+		<canvas id="dice1" width="100px" height="100px">
+			Dice1
+		</canvas>
+	</div>
+	<div style="width: 100px;height: 100px;border: 5px solid blue;display: inline-block;">
+		<canvas id="dice2" width="100px" height="100px">
+			Dice2
+		</canvas>
+	</div>
+</body>
+<script src="index.js"></script>
+
+</html>
