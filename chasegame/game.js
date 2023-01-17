@@ -1,4 +1,4 @@
-function startGame(level) {
+function startGame(level, theme) {
 	let container = document.getElementById('container')
 	container.innerHTML = ''
 
@@ -77,36 +77,37 @@ function startGame(level) {
 
 	// Player moves.
 
-	let _innerMove=1
-	if(characters.player.moves)
-	_innerMove=characters.player.moves
+	let _innerMove = 1
+	if (characters.player.moves)
+		_innerMove = characters.player.moves
 
-	let _innerMoveTotal=0
-	function generateMoves(){
-		_innerMoveTotal+=_innerMove
-		let ret=Math.floor(_innerMoveTotal)
-		_innerMoveTotal-=ret
+	let _innerMoveTotal = 0
+	function generateMoves() {
+		_innerMoveTotal += _innerMove
+		let ret = Math.floor(_innerMoveTotal)
+		_innerMoveTotal -= ret
 		return ret
 	}
-	
-	let playerMoveCount=generateMoves()
+
+	let playerMoveCount = generateMoves()
 
 	function playerMove(dir) {
-		if (playerMoveCount>=1&&canMove(characters.player, dir)) {
+		if (playerMoveCount >= 1 && canMove(characters.player, dir)) {
 			--playerMoveCount;
 			doMove(characters.player, dir)
 		}
 	}
 
 	function keydownEvent(e) {
-		if (e.code == 'ArrowUp')
+		let c = e.code;
+		if (c == 'ArrowUp' || c == 'KeyW')
 			playerMove(DIR_UP)
-		if (e.code == 'ArrowRight')
+		if (c == 'ArrowRight' || c == 'KeyD')
 			playerMove(DIR_RIGHT)
-		if (e.code == 'ArrowDown')
+		if (c == 'ArrowDown' || c == 'KeyS')
 			playerMove(DIR_DOWN)
-		if (e.code == 'ArrowLeft')
-		playerMove(DIR_LEFT)
+		if (c == 'ArrowLeft' || c == 'KeyA')
+			playerMove(DIR_LEFT)
 	}
 
 	document.addEventListener('keydown', keydownEvent)
@@ -179,7 +180,7 @@ function startGame(level) {
 	}
 
 	function intervalEvent() {
-		playerMoveCount=generateMoves()
+		playerMoveCount = generateMoves()
 
 		characters.chaser.forEach(function (chaser) {
 			let dir = DIR_NONE
@@ -212,6 +213,10 @@ function startGame(level) {
 
 	// Create a table.
 
+	let displayUnitSize = 84
+	let displayUnitBgSize = '150%'
+	let displayButtonSize = 200
+
 	let displayHeight = level.displayHeight
 	let displayWidth = level.displayWidth
 	let displayPlayerX = level.displayPlayerX
@@ -226,7 +231,7 @@ function startGame(level) {
 
 		for (let y = 0; y < displayWidth; ++y) {
 			let tableCell = document.createElement('td')
-			tableCell.style = `width:${level.displayUnitSize}px;height:${level.displayUnitSize}px;background-position:center;background-size:${level.displayUnitBgSize};background-repeat:no-repeat;margin:0;border:none;border-radius:${level.displayUnitBorderRadius}px`
+			tableCell.style = `width:${displayUnitSize}px;height:${displayUnitSize}px;background-position:center;background-size:${displayUnitBgSize};background-repeat:no-repeat;margin:0;border:none`
 			tableRow.appendChild(tableCell)
 			tableRowCells.push(tableCell)
 		}
@@ -236,27 +241,45 @@ function startGame(level) {
 	}
 
 	let div = document.createElement('div')
-	div.style = `width:${level.displayButtonSize * 3}px;position:relative`
+	div.style = `width:${displayButtonSize * 3}px;min-height:${displayButtonSize * 3}px;position:relative;display:flex;flex-direction:column;align-items:center`
 
-	function createKbdButton(x, y, content,dir) {
-		let button = document.createElement('button')
-		button.style = `position:absolute;top:${x + level.displayButtonSize * 0.1}px;left:${y + level.displayButtonSize * 0.1}px;width:${level.displayButtonSize * 0.8}px;height:${level.displayButtonSize * 0.8}px;border-radius:${level.displayButtonSize * 0.5}px;background-color:#CCC;border:none;font-size:${level.displayButtonSize * 0.5}px`
+	function createKbdButton(x, y, content, dir) {
+		let button = document.createElement('div')
+		button.className = 'button'
+		button.style = `margin:0;position:absolute;top:${x + displayButtonSize * 0.1}px;left:${y + displayButtonSize * 0.1}px;width:${displayButtonSize * 0.8}px;height:${displayButtonSize * 0.8}px;font-size:${displayButtonSize * 0.5}px`
 		button.innerHTML = content
-		button.addEventListener('click',function(){playerMove(dir)})
+		button.addEventListener('click', function () { playerMove(dir) })
 		div.appendChild(button)
 	}
-	createKbdButton(0, level.displayButtonSize, '↑',0);
-	createKbdButton(level.displayButtonSize, 0, '←',3);
-	createKbdButton(level.displayButtonSize, level.displayButtonSize, '↓',2);
-	createKbdButton(level.displayButtonSize, level.displayButtonSize + level.displayButtonSize, '→',1);
+	createKbdButton(0, displayButtonSize, '↑', 0);
+	createKbdButton(displayButtonSize, 0, '←', 3);
+	createKbdButton(displayButtonSize * 2, displayButtonSize, '↓', 2);
+	createKbdButton(displayButtonSize, displayButtonSize * 2, '→', 1);
 
 	let mainContent = document.createElement('div')
-	mainContent.style = 'display:flex;flex-wrap:wrap;align-content:center;justify-content:center;width:100%;height:100%'
+	mainContent.style = 'display:flex;flex-wrap:wrap;align-content:center;justify-content:center;align-items:center;width:100%;height:100%'
 
 	mainContent.appendChild(table)
 	mainContent.appendChild(div)
 
 	container.appendChild(mainContent)
+
+	// Set the content of a cell.
+
+	let displayImage = {
+		none: 'none',
+		obstacle: 'url("obstacle.png")',
+		player: 'url("iota.png")',
+		chaser: 'url("omega.png")',
+		goal: 'url("omicron.png")'
+	}
+	if (theme && theme.displayImage)
+		displayImage = theme.displayImage
+
+	function setContent(x, y, img) {
+		let cell = tableCells[x][y]
+		cell.style.backgroundImage = displayImage[img]
+	}
 
 	// Draw the level.
 
@@ -293,15 +316,6 @@ function startGame(level) {
 				setContent(x, y, name[x][y])
 	}
 
-	// Set the content of a cell.
-
-	let displayImage = level.displayImage
-
-	function setContent(x, y, img) {
-		let cell = tableCells[x][y]
-		cell.style.backgroundImage = displayImage[img]
-	}
-
 	// Every game has an end ...
 
 	let gameEnded = false;
@@ -311,28 +325,62 @@ function startGame(level) {
 
 		removeKbdEvent();
 		removeIntervalEvent();
-		div.innerHTML=''
+		div.innerHTML = ''
 
-		let prompt=''
-		if (ending == 'win') 
-			prompt='YOU WIN'
-		if (ending == 'lose') 
-			prompt='YOU LOSE'
+		let prompt = ''
+		if (ending == 'win')
+			prompt = 'YOU WIN!'
+		if (ending == 'lose')
+			prompt = 'YOU LOSE...'
 
-			let text=document.createElement('p');
-			text.style='color:#FFF;font-size:60px'
-			text.innerHTML=prompt
-			div.appendChild(text)
+		let title = document.createElement('p');
+		title.style = 'font-size:40px'
+		title.innerHTML = level.name
+		div.appendChild(title)
 
-			function createButton(title,click){
-		let button=document.createElement('button')
-		button.style='margin:10px;width:90%;height:60px;border-radius:5px;border:none;background-color:#FFF;font-size:30px'
-		button.innerHTML=title
-		button.addEventListener('click',click)
-		div.appendChild(button)
-			}
-			createButton('Retry',currentLevel)
-			createButton('Menu',startUI)
+		let text = document.createElement('p');
+		text.style = 'font-size:60px'
+		text.innerHTML = prompt
+		div.appendChild(text)
+
+		let hasNext=(nextID !== null && ending == 'win')
+
+		function clickR() {
+			removeKbdEventRestart()
+			play()
+		}
+		function clickN() {
+			removeKbdEventRestart()
+			id = nextID
+			play()
+		}
+
+		function keydownEventRestart(e) {
+			let c = e.code;
+			if (c == 'KeyR')
+				clickR()
+			if (hasNext&&c == 'KeyN')
+				clickN()
+		}
+
+		document.addEventListener('keydown', keydownEventRestart)
+
+		function removeKbdEventRestart() {
+			document.removeEventListener('keydown', keydownEventRestart)
+		}
+
+		function createButton(title, click) {
+			let button = document.createElement('div')
+			button.className = 'button'
+			button.style = 'width:90%'
+			button.innerHTML = title
+			button.addEventListener('click', click)
+			div.appendChild(button)
+		}
+		createButton('<u>R</u>etry', clickR)
+		if (hasNext)
+			createButton('<u>N</u>ext Level', clickN)
+		createButton('Menu', startUI)
 
 		if (level.onend)
 			level.onend(ending)

@@ -1,13 +1,38 @@
 <!DOCTYPE html>
+
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="maximum-scale=1.0, user-scalable=no">
 	<title>IMALYD's Chasing Game</title>
+	<style>
+		@font-face {
+			font-family: 'FuturaHandwritten';
+			font-style: normal;
+			src: url('FuturaHandwritten.ttf') format('truetype');
+		}
+		.button {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			height: 60px;
+			margin: 10px;
+			border: none;
+			border-radius: 5px;
+			background-color: #CCC;
+			color: #000;
+			font-size: 30px;
+		}
+	</style>
 </head>
-<body style="display:flex;justify-content:center;align-items:center;flex-direction:column;width:95%;height:100%;background-color:#333" id="container">
+
+<body
+	style="display:flex;justify-content:center;align-items:center;flex-direction:column;width:95%;height:100%;background-color:#333;color:#EEE;font-family:'FuturaHandwritten';user-select:none"
+	id="container">
 </body>
 <script src="game.js"></script>
 <script src="levels.js"></script>
-<script src="testlevel.js"></script>
 <script src="level1.js"></script>
+<script src="level2.js"></script>
+<script src="level3.js"></script>
+<script src="level4.js"></script>
 <script src="start.js"></script>

@@ -1,12 +1,21 @@
-var currentLevel
-function startUI(){
+var id
+var nextID
+function play(){
+	if (levels[id + 1])
+	nextID = id+1
+	else
+	nextID=null
+	levels[id].fn()
+}
+function startUI() {
 	let container = document.getElementById('container')
-	container.innerHTML = '<h1 style="color:#FFF;font-size:60px">IMALYD\'s Chasing Game</h1><h2 style="color:#FFF;font-size:40px">IMALYD</h2>'
-	levels.forEach(function(level){
-		let button=document.createElement('button')
-		button.style='margin:10px;width:600px;height:60px;border-radius:5px;border:none;background-color:#FFF;font-size:30px'
-		button.innerHTML=level.title
-		button.addEventListener('click',function(){currentLevel=level.fn;level.fn()})
+	container.innerHTML = '<p style="font-size:60px">IMALYD\'s Chasing Game</p><p style="font-size:40px">IMALYD</p>'
+	levels.forEach(function (level, n) {
+		let button = document.createElement('div')
+		button.className = 'button'
+		button.style = 'width:600px'
+		button.innerHTML = level.title
+		button.addEventListener('click', function () { id=n;play() })
 		container.appendChild(button)
 	})
 }

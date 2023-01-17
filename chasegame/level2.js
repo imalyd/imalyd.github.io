@@ -1,7 +1,7 @@
-function level1() {
+function level2() {
 	startGame({
-		id: 'level1',
-		name: 'Level #1',
+		id: 'level2',
+		name: 'Level #2',
 		mapHeight: 9,
 		mapWidth: 9,
 		map: [
@@ -10,7 +10,7 @@ function level1() {
 			['.', '.', '.', '.', '.', '.', '.', '#', '.'],
 			['.', '#', '#', '#', '#', '#', '.', '#', '.'],
 			['.', '#', '.', '.', '.', '#', '.', '#', '.'],
-			['.', '#', '.', '#', '#', '#', '.', '#', '.'],
+			['.', '#', '.', '#', '.', '#', '.', '#', '.'],
 			['.', '#', '.', '.', '.', '.', '.', '#', '.'],
 			['.', '#', '#', '#', '#', '#', '#', '#', '.'],
 			['.', '.', '.', '.', '.', '.', '.', '.', '.']
@@ -18,7 +18,7 @@ function level1() {
 		characters: {
 			player: { x: 0, y: 2,moves:2 },
 			chaser: [{ x: 0, y: 0 }],
-			goal: [{ x: 4, y: 4 }]
+			goal: [{ x: 0, y: 0 }]
 		},
 		timePeriod: 200,
 
@@ -28,4 +28,4 @@ function level1() {
 		displayPlayerY: 4
 	})
 }
-addLevel(level1,'Level #1')
+addLevel(level2,'Level #2')

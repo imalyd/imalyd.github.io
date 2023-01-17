@@ -27,10 +27,10 @@ function testLevel() {
 			chaser: 'url("omega.png")',
 			goal: 'url("omicron.png")'
 		},
-		displayUnitBorderRadius: 5,
+		displayUnitBorderRadius: 0,
 		displayUnitSize: 80,
 		displayUnitBgSize: '150%',
-		displayButtonSize: 100,
+		displayButtonSize: 200,
 
 		onload: function () {
 			//console.log('ONLOAD')
